@@ -1,5 +1,6 @@
 const express = require('express');
 const fs = require('fs');
+const path = require('path');
 const router = express.Router();
 
 router.get('/', (req, res) => {
@@ -21,10 +22,10 @@ router.get('/', (req, res) => {
 });
 
 router.get('/:imageName', (req, res) => {
-  const imageName = req.params.imageName;
-  const imagePath = `uploads/${imageName}`;
-  res.sendFile(imagePath, { root: __dirname });
-});
+    const imageName = req.params.imageName;
+    const imagePath = path.join(__dirname, '..', 'uploads', imageName);
+    res.sendFile(imagePath);
+  });
 
 router.post('/', (req, res) => {
     const imageFile = req.files.image;
