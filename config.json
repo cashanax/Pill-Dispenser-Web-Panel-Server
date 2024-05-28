@@ -1,5 +1,7 @@
 {
   "deviceStatus": "evenBetterMore",
   "AdminLoggedIn": "true",
-  "activeCell": "3"
+  "activeCell": "3",
+  "email": "user3@example.com",
+  "password": "password3"
 }
