@@ -2,6 +2,8 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const router = express.Router();
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
 
 router.get('/', (req, res) => {
   const imageFolder = 'uploads';
@@ -27,8 +29,14 @@ router.get('/:imageName', (req, res) => {
     res.sendFile(imagePath);
   });
 
-router.post('/', (req, res) => {
-    const imageFile = req.files.image;
+  router.post('/', upload.single('image'), (req, res) => {
+    const imageFile = req.file; // multer adds the file object to the request
+
+    if (!imageFile) {
+        res.status(400).send('No file uploaded');
+        return;
+    }
+
     const imageFolder = 'uploads';
 
     // Check if the image folder exists, if not create it
@@ -36,8 +44,10 @@ router.post('/', (req, res) => {
         fs.mkdirSync(imageFolder);
     }
 
+    const newPath = path.join(imageFolder, imageFile.originalname);
+
     // Move the uploaded image to the image folder
-    imageFile.mv(`${imageFolder}/${imageFile.name}`, (err) => {
+    fs.rename(imageFile.path, newPath, (err) => {
         if (err) {
             res.status(500).send('Error uploading image');
         } else {
