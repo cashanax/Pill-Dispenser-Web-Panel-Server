@@ -1,5 +1,7 @@
 const express = require('express');
 const { readJSONFile, writeJSONFile } = require('../utils/fileUtils');
+const fs = require('fs');
+
 const router = express.Router();
 
 router.get('/', (req, res) => {
@@ -16,16 +18,21 @@ router.post('/', (req, res) => {
 
 router.patch('/:id', (req, res) => {
   const schedule = readJSONFile('schedule.json');
-  const scheduleId = req.params.id;
+  const scheduleIndex = parseInt(req.params.id, 10);
   const updatedSchedule = req.body;
-  const scheduleIndex = schedule.findIndex(item => item.id === scheduleId);
-  if (scheduleIndex !== -1) {
+  if (schedule[scheduleIndex]) {
     schedule[scheduleIndex] = {...schedule[scheduleIndex], ...updatedSchedule};
     writeJSONFile('schedule.json', schedule);
     res.json({ message: 'Schedule updated', schedule: schedule[scheduleIndex] });
   } else {
     res.status(404).send('Schedule not found');
   }
+});
+
+router.get('/first-two', (req, res) => {
+  const schedule = readJSONFile('schedule.json');
+  const firstTwo = schedule.slice(0, 2);
+  res.json(firstTwo);
 });
 
 module.exports = router;
