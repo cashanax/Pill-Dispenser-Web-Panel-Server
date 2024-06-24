@@ -28,7 +28,24 @@ router.get('/:imageName', (req, res) => {
     const imagePath = path.join(__dirname, '..', 'uploads', imageName);
     res.sendFile(imagePath);
   });
+  router.delete('/:imageName', (req, res) => {
+    const imageName = req.params.imageName;
+    const imagePath = path.join(__dirname, '..', 'uploads', imageName);
 
+    // Check if the image exists
+    if (fs.existsSync(imagePath)) {
+      // Delete the image file
+      fs.unlink(imagePath, (err) => {
+        if (err) {
+          res.status(500).send('Error deleting image');
+        } else {
+          res.send('Image deleted successfully');
+        }
+      });
+    } else {
+      res.status(404).send('Image not found');
+    }
+  });
   router.post('/', upload.single('image'), (req, res) => {
     const imageFile = req.file; // multer adds the file object to the request
 
